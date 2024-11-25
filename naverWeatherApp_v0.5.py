@@ -7,6 +7,10 @@ from PyQt5.QtCore import Qt
 from os import environ
 import multiprocessing as mp
 
+import requests
+from bs4 import BeautifulSoup
+
+
 form_class = uic.loadUiType("ui/weather.ui")[0]
 # QT Designer에서 만든 외부 ui 불러오기
 
@@ -19,6 +23,34 @@ class WeatherApp(QMainWindow, form_class):
         self.setWindowIcon(QIcon("img/weather_icon.png"))  # 윈도우 아이콘 설정
         self.statusBar().showMessage("네이버 날씨 앱 v0.5")  # 윈도우 상태 표시줄 설정
         self.setWindowFlag(Qt.WindowStaysOnTopHint)  # 항상위에 옵션
+
+        self.weather_btn.clicked.connect(self.weather_search)  # 날씨 조회 버튼 클릭시 weather_search 메소드 호출
+
+    def weather_search(self):  # 날씨 조회 메소드
+        inputArea = self.area_input_edit.text()  # 사용자가 입력한 지역명 텍스트 가져오기
+
+        html = requests.get(f"https://search.naver.com/search.naver?query={inputArea}+날씨")
+        soup = BeautifulSoup(html.text, "html.parser")
+        # print(soup.prettify())
+        nowTemperText = soup.find("div", {"class":"temperature_text"}).text.strip()  # 현재 온도
+        nowTemperText = nowTemperText[5:]
+        print(nowTemperText)
+        areaText = soup.find("h2",{"class":"title"}).text.strip()  # 날씨 조회 지역이름
+        print(areaText)
+        weatherText = soup.find("span",{"class":"weather before_slash"}).text.strip()  # 오늘 날씨 텍스트
+        print(weatherText)
+        yesterdayTempText = soup.find("p",{"class":"summary"}).text.strip()  # 어제와의 날씨 비교
+        # print(yesterdayTempText[:15].strip())
+        yesterdayTempText = yesterdayTempText[:15].strip()
+        print(yesterdayTempText)
+        senseTemperText = soup.find("dd",{"class":"desc"}).text.strip()  # 체감온도
+        print(senseTemperText)
+        todayWeatherInfo = soup.select("ul.today_chart_list>li")  # 리스트 형태로 반환->미세먼지,초미세먼지,자외선,일몰
+        # print(todayWeatherInfo)
+        dustInfo1 = todayWeatherInfo[0].find("span",{"class":"txt"}).text.strip()  # 미세먼지 정보
+        dustInfo2 = todayWeatherInfo[1].find("span", {"class": "txt"}).text.strip()  # 초미세먼지 정보
+        print(dustInfo1)
+        print(dustInfo2)
 
 
 
