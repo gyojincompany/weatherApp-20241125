@@ -1,4 +1,8 @@
 # v0.6 날씨 이미지 추가
+# v0.6 날씨 지역 입력 후 엔터키 이벤트 처리
+# v0.6 프로그램 실행 시 현재 지역 날씨 출력 추가
+# v0.6 공란으로 검색 시 경고창 출력 후 현재 지역 날씨 출력
+
 
 import sys
 from PyQt5.QtWidgets import *
@@ -22,15 +26,22 @@ class WeatherApp(QMainWindow, form_class):
         super().__init__()  # 부모 클래스의 생성자 호출
         self.setupUi(self)  # 불러온 ui 파일을 연결
 
-        self.setWindowTitle("구글 한줄 번역기")  # 윈도우 제목 설정
+        self.setWindowTitle("네이버 날씨 프로그램")  # 윈도우 제목 설정
         self.setWindowIcon(QIcon("img/weather_icon.png"))  # 윈도우 아이콘 설정
         self.statusBar().showMessage("네이버 날씨 앱 v0.6")  # 윈도우 상태 표시줄 설정
-        self.setWindowFlag(Qt.WindowStaysOnTopHint)  # 항상위에 옵션
+        self.setWindowFlag(Qt.WindowStaysOnTopHint)  # 항상 위에 옵션
+        
+        self.weather_search(1)  # 프로그램 실행시 자동으로 날씨 조회 결과 출력->공란으로 검색->현재지역의 날씨가 출력
+        self.weather_btn.clicked.connect(self.weather_search_call)  # 날씨 조회 버튼 클릭시 weather_search 메소드 호출
+        self.area_input_edit.returnPressed.connect(self.weather_search_call)  # 엔터 이벤트 처리
 
-        self.weather_btn.clicked.connect(self.weather_search)  # 날씨 조회 버튼 클릭시 weather_search 메소드 호출
+    def weather_search_call(self):
+        self.weather_search(0)
 
-    def weather_search(self):  # 날씨 조회 메소드
+    def weather_search(self, startFlag):  # 날씨 조회 메소드
         inputArea = self.area_input_edit.text()  # 사용자가 입력한 지역명 텍스트 가져오기
+        if inputArea == "" and startFlag != 1:
+            QMessageBox.information(self,"날씨정보","지역을 입력하지 않으시면\n현재 지역의 날씨가 출력됩니다.")
 
         html = requests.get(f"https://search.naver.com/search.naver?query={inputArea}+날씨")
         soup = BeautifulSoup(html.text, "html.parser")
