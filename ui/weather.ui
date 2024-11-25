@@ -53,7 +53,7 @@
      <string>날씨조회</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="weather_area_label">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -80,7 +80,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="lweather_image_label">
+   <widget class="QLabel" name="weather_image_label">
     <property name="geometry">
      <rect>
       <x>50</x>

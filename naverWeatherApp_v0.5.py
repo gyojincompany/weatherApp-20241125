@@ -52,6 +52,14 @@ class WeatherApp(QMainWindow, form_class):
         print(dustInfo1)
         print(dustInfo2)
 
+        # ui 해당 label에 크롤링한 텍스트 출력
+        self.weather_area_label.setText(areaText)
+        self.now_temper_label.setText(nowTemperText)
+        self.weather_image_label.setText(weatherText)
+        self.yester_temper_label.setText(yesterdayTempText)
+        self.sense_temper_label.setText(senseTemperText)
+        self.dust1_info_label.setText(dustInfo1)
+        self.dust2_info_label.setText(dustInfo2)
 
 
 def suppress_qt_warnings():  # 해상도별 글자크기 강제 고정하는 함수
